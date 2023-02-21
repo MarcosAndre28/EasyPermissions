@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">EasyPermissions</string>
+    <string name="not_permissions">Todas as permissões foram negadas</string>
+    <string name="yes_permissions">Todas as permissões são concedidas</string>
+    <string name="app_permissions">Essas permissões são necessárias para este aplicativo</string>
+</resources>
