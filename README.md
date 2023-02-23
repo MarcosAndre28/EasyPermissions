@@ -6,7 +6,7 @@ EasyPermissions é uma biblioteca Android que simplifica a solicitação de perm
 
 1. Adicione a seguinte dependência no arquivo build.gradle do seu projeto:
  ```
- implementation 'com.vmadalin:easypermissions-ktx:1.0.0'
+  implementation 'pub.devrel:easypermissions:3.0.0'
   ``` 
  2. Certifique-se de que sua aplicação tenha a versão mínima do SDK do Android 23 ou superior.
  
