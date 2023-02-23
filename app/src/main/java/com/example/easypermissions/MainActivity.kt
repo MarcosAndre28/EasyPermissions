@@ -1,62 +1,66 @@
 package com.example.easypermissions
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
+import androidx.appcompat.app.AlertDialog
 import com.example.easypermissions.databinding.ActivityMainBinding
-import com.vmadalin.easypermissions.EasyPermissions
-import com.vmadalin.easypermissions.dialogs.SettingsDialog
+import pub.devrel.easypermissions.AppSettingsDialog
+import pub.devrel.easypermissions.EasyPermissions
 
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     lateinit var binding: ActivityMainBinding
 
+    // Código da permissão usada para identificar a solicitação de permissão
     companion object {
         const val PERMISSON_REQUEST_CODE = 1
     }
 
+    // Método que é executado ao criar a Activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        binding.apply {
-            if (hasPermissions()){
-                btnRequestPermissions.isEnabled = false
-                tvMsg.text = getString(R.string.yes_permissions)
-            }
-            else{
-                btnRequestPermissions.isEnabled = true
-                tvMsg.text = getString(R.string.not_permissions)
-            }
-            btnRequestPermissions.setOnClickListener {
-                requestPermissions()
-            }
-        }
-    }
 
-    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
-       if (EasyPermissions.somePermissionPermanentlyDenied(this,perms)){
-           SettingsDialog.Builder(this).build().show()
-       }
-        else{
+        // Infla o layout da Activity usando o binding
+        binding = ActivityMainBinding.inflate(layoutInflater)
+
+        // Define o layout da Activity
+        setContentView(binding.root)
+
+        // Define o comportamento do botão "Request Permissions"
+        binding.btnRequestPermissions.setOnClickListener {
             requestPermissions()
         }
+
+        // Verifica se as permissões já foram concedidas e atualiza a interface
+        updateUI(hasPermissions())
     }
 
-
-    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
-        binding.apply {
-            tvMsg.text = "Todas as permissões são concedidas"
-            btnRequestPermissions.isEnabled = false
+    // Método para atualizar a interface de usuário
+    private fun updateUI(hasPermissions: Boolean) {
+        if (hasPermissions) {
+            // Se as permissões já foram concedidas, desabilita o botão
+            binding.btnRequestPermissions.isEnabled = false
+            // Atualiza o TextView com uma mensagem indicando que as permissões foram concedidas
+            binding.tvMsg.text = getString(R.string.yes_permissions)
+        } else {
+            // Se as permissões ainda não foram concedidas, habilita o botão
+            binding.btnRequestPermissions.isEnabled = true
+            // Atualiza o TextView com uma mensagem indicando que as permissões não foram concedidas
+            binding.tvMsg.text = getString(R.string.not_permissions)
         }
     }
 
+    // Verifica se as permissões já foram concedidas
     private fun hasPermissions() = EasyPermissions.hasPermissions(
-            this,
-            android.Manifest.permission.CAMERA,
-            android.Manifest.permission.READ_CONTACTS
-        )
+        this,
+        android.Manifest.permission.CAMERA,
+        android.Manifest.permission.READ_CONTACTS
+    )
 
-
+    // Solicita as permissões
     private fun requestPermissions() {
         EasyPermissions.requestPermissions(
             this,
@@ -64,12 +68,51 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             PERMISSON_REQUEST_CODE,
             android.Manifest.permission.CAMERA,
             android.Manifest.permission.READ_CONTACTS
-
         )
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    // Trata o resultado da solicitação de permissão
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults,this)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    // Trata o evento de permissões concedidas
+    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+        updateUI(true)
+    }
+
+    // Trata o evento de permissões negadas
+    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            // Se alguma permissão foi negada permanentemente, mostra um diálogo personalizado
+            showCustomPermissionDialog()
+        } else {
+            // Caso contrário, solicita as permissões novamente
+            requestPermissions()
+        }
+    }
+
+    // Mostra um diálogo personalizado informando o usuário sobre a necessidade de conceder as permissões
+    private fun showCustomPermissionDialog() {
+        val builder = AlertDialog.Builder(this)
+            .setTitle(R.string.permission_dialog_title)
+            .setMessage(R.string.permission_dialog_message)
+            .setPositiveButton(R.string.permission_dialog_button) { dialog, which -> openAppSettings() }
+        builder.show()
+    }
+
+    // Abre a tela de configurações do aplicativo para que o usuário
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        startActivityForResult(intent, PERMISSON_REQUEST_CODE)
     }
 }
+
+

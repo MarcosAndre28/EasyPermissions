@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">EasyPermissions</string>
-    <string name="not_permissions">Todas as permissões foram negadas</string>
-    <string name="yes_permissions">Todas as permissões são concedidas</string>
+    <string name="all_permissions_granted">Todas as permissões concedidas!</string>
+    <string name="not_permissions">Permissões não concedidas</string>
+    <string name="yes_permissions">Permissões concedidas</string>
     <string name="app_permissions">Essas permissões são necessárias para este aplicativo</string>
+    <string name="request_permissions">Request Permissions</string>
+    <string name="permissions">Permissões</string>
+    <string name="info_tv">Este aplicativo precisa de permissão para continuar.</string>
+    <string name="request_permi">Solicitar permissões</string>
+    <string name="permission_dialog_button">Permitir</string>
+    <string name="permission_dialog_title">Permissões Necessárias</string>
+    <string name="permission_dialog_message">Para continuar, é necessário que você aceite as permissões.</string>
 </resources>

@@ -46,5 +46,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     // EasyPermissions
-    implementation 'com.vmadalin:easypermissions-ktx:1.0.0'
+    implementation 'pub.devrel:easypermissions:3.0.0'
 }
